@@ -1,0 +1,185 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+@model  IEnumerable<ImportCsvFileTask.Employees>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width" />
+    <title>Import CSV file</title>
+</head>
+<body>
+    <div class="container" style="margin-top:20px;">
+        <h2 align="center">Import CSV File</h2>
+        <br />
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="file" name="postedFile" />
+            <input type="submit" value="Import" class="btn btn-primary"/>
+        }
+
+        @if (Model.Count() > 0)
+        {
+            <hr />
+            <input id="myInput" class="form-control" type="search" placeholder="Search the key word..." style="margin:20px 0; max-width:300px;">
+            <table cellpadding="0" cellspacing="0" id="Employee_Table" class="table table-bordered table-sm">
+                <tr>
+                    <th>Payroll Number</th>
+                    <th>Forename</th>
+                    <th>Surname</th>
+                    <th>Date of Birth</th>
+                    <th>Telephone</th>
+                    <th>Mobile</th>
+                    <th>Address</th>
+                    <th>Address 2</th>
+                    <th>Postcode</th>
+                    <th>Email Home</th>
+                    <th>Start Date</th>
+                </tr>
+                <tbody id="myTable">
+                    @foreach (Employees employee in Model)
+                    {
+                        <tr>
+                            <td class="Payroll_Number">@employee.Payroll_Number</td>
+                            <td class="Forename"><span>@employee.Forename</span><input type="text" value="@employee.Forename" style="display:none" /></td>
+                            <td class="Surname"><span>@employee.Surname</span><input type="text" value="@employee.Surname" style="display:none" /></td>
+                            <td class="Date_of_Birth"><span>@employee.Date_of_Birth.ToString("dd/MM/yyyy")</span><input type="text" value="@employee.Date_of_Birth.ToString("dd/MM/yyyy")" style="display:none" /></td>
+                            <td class="Telephone"><span>@employee.Telephone</span><input type="text" value="@employee.Telephone" style="display:none" /></td>
+                            <td class="Mobile"><span>@employee.Mobile</span><input type="text" value="@employee.Mobile" style="display:none" /></td>
+                            <td class="Address"><span>@employee.Address</span><input type="text" value="@employee.Address" style="display:none" /></td>
+                            <td class="Address_2"><span>@employee.Address_2</span><input type="text" value="@employee.Address_2" style="display:none" /></td>
+                            <td class="Postcode"><span>@employee.Postcode</span><input type="text" value="@employee.Postcode" style="display:none" /></td>
+                            <td class="EMail_Home"><span>@employee.EMail_Home</span><input type="text" value="@employee.EMail_Home" style="display:none" /></td>
+                            <td class="Start_Date"><span>@employee.Start_Date.ToString("dd/MM/yyyy")</span><input type="text" value="@employee.Start_Date.ToString("dd/MM/yyyy")" style="display:none" /></td>
+                            <td>
+                                <a class="Edit btn btn-info" href="javascript:;">Edit</a>
+                                <a class="Update btn btn-warning btn-sm" href="javascript:;" style="display:none">Update</a>
+                                <a class="Cancel btn btn-secondary btn-sm" href="javascript:;" style="display:none">Cancel</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <hr />
+            <p id="demo"></p>
+            <button class="btn btn-success" onclick="sortTable()">Sort by Surname</button>
+        }
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
+    <script>
+        //Sorting
+        function sortTable() {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("Employee_Table");
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[2];
+                    y = rows[i + 1].getElementsByTagName("TD")[2];
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+
+        //Searching
+        $(document).ready(function () {
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#myTable tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+
+        //Editing
+        $("body").on("click", "#Employee_Table .Edit", function () {
+            var row = $(this).closest("tr");
+            $("td", row).each(function () {
+                if ($(this).find("input").length > 0) {
+                    $(this).find("input").show();
+                    $(this).find("span").hide();
+                }
+            });
+            row.find(".Update").show();
+            row.find(".Cancel").show();
+            $(this).hide();
+        });
+
+        //Updating
+        $("body").on("click", "#Employee_Table .Update", function () {
+            var row = $(this).closest("tr");
+            $("td", row).each(function () {
+                if ($(this).find("input").length > 0) {
+                    var span = $(this).find("span");
+                    var input = $(this).find("input");
+                    span.html(input.val());
+                    span.show();
+                    input.hide();
+                }
+            });
+            row.find(".Edit").show();
+            row.find(".Cancel").hide();
+            $(this).hide();
+
+            var _employee = {};
+            _employee.Payroll_Number = row.find(".Payroll_Number").find("span").html();
+            _employee.Forename = row.find(".Forename").find("span").html();
+            _employee.Surname = row.find(".Surname").find("span").html();
+            _employee.Date_of_Birth = row.find(".Date_of_Birth").find("span").html();
+            _employee.Telephone = row.find(".Telephone").find("span").html();
+            _employee.Mobile = row.find(".Mobile").find("span").html();
+            _employee.Address = row.find(".Address").find("span").html();
+            _employee.Address_2 = row.find(".Address_2").find("span").html();
+            _employee.Postcode = row.find(".Postcode").find("span").html();
+            _employee.EMail_Home = row.find(".EMail_Home").find("span").html();
+            _employee.Start_Date = row.find(".Start_Date").find("span").html();
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/UpdateEmployee",
+                data: JSON.stringify(_employee),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+        });
+
+        //Cancel
+        $("body").on("click", "#Employee_Table .Cancel", function () {
+            var row = $(this).closest("tr");
+            $("td", row).each(function () {
+                if ($(this).find("input").length > 0) {
+                    var span = $(this).find("span");
+                    var input = $(this).find("input");
+                    input.val(span.html());
+                    span.show();
+                    input.hide();
+                }
+            });
+            row.find(".Edit").show();
+            row.find(".Update").hide();
+            $(this).hide();
+        });
+
+        var x = document.getElementById("Employee_Table").rows.length - 1;
+        document.getElementById("demo").innerHTML = "<b>There are <mark> " + x + " </mark>rows in the table.</b>";
+    </script>
+</body>
+</html>

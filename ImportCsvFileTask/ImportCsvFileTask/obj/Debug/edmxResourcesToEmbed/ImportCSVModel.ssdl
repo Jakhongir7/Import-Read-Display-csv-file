@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="employee_databaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Employees">
+    <Key>
+      <PropertyRef Name="Payroll_Number" />
+    </Key>
+    <Property Name="Payroll_Number" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Forename" Type="varchar" MaxLength="200" Nullable="false" />
+    <Property Name="Surname" Type="varchar" MaxLength="200" Nullable="false" />
+    <Property Name="Date_of_Birth" Type="date" Nullable="false" />
+    <Property Name="Telephone" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="Mobile" Type="varchar" MaxLength="100" />
+    <Property Name="Address" Type="varchar" MaxLength="200" Nullable="false" />
+    <Property Name="Address_2" Type="varchar" MaxLength="200" />
+    <Property Name="Postcode" Type="varchar" MaxLength="50" />
+    <Property Name="EMail_Home" Type="varchar" MaxLength="200" Nullable="false" />
+    <Property Name="Start_Date" Type="date" Nullable="false" />
+  </EntityType>
+  <EntityContainer Name="employee_databaseModelStoreContainer">
+    <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
+  </EntityContainer>
+</Schema>
